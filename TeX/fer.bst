@@ -927,6 +927,7 @@ FUNCTION {phdthesis}
   format.btitle "title" output.check
   new.block
   "Doktorska disertacija" format.thesis.type output.nonnull
+  new.block
   school "school" output.check
   address output
   format.date "year" output.check

@@ -43,6 +43,7 @@ showstringspaces=false}
 \usepackage{courier}
 
 \usepackage[most]{tcolorbox}
+\usepackage{pdfpages}
 
 \newtcolorbox{myframe}[1][]{
   enhanced,
@@ -68,6 +69,7 @@ showstringspaces=false}
 
 % Ispis stranice s napomenom o umetanju izvornika rada. Uklonite naredbu \izvornik ako želite izbaciti tu stranicu.
 %\izvornik
+\includepdf[pages={1}]{resources/izvornik.pdf}
 
 % Dodavanje zahvale ili prazne stranice. Ako ne želite dodati zahvalu, naredbu ostavite radi prazne stranice.
 \zahvala{}
@@ -75,7 +77,7 @@ showstringspaces=false}
 \tableofcontents
 
 \chapter{Uvod}\label{uvod}
-Planiranje i raspoređivanje aktivnosti svakodnevni je problem koji može postati vrlo složen kad govorimo o velikom broju zadataka, a spada u razred NP-teških problema. Kako aktivnosti u svakodnevnom životu (radu) može biti puno, pojavljuje se potreba za dobrom organizacijom aktivnosti s obzirom na njihovo trajanje, rok te eventualno prioritet.
+Planiranje i raspoređivanje aktivnosti svakodnevni je problem koji može postati vrlo složen kad govorimo o velikom broju zadataka, a uobičajeno pripada u razred $\mathcal{NP}$-teških problema\footnote{Razred $\mathcal{NP}$-teških problema obuhvaća probleme za koje nema za sada poznato polinomijalnog rješenje.}. Kako aktivnosti u svakodnevnom životu (radu) može biti puno, pojavljuje se potreba za dobrom organizacijom aktivnosti s obzirom na njihovo trajanje, rok te eventualno prioritet.
 
 U okviru ovog rada razmatrat će se i rješavati problem automatiziranog raspoređivanja zadataka u kontekstu osobnog rasporeda. Želimo projektirati i napraviti sustav koji dani ulazni skup zadataka raspoređuje u zadani raspored, pritom poštujući određena ograničenja. Na samom početku možemo pretpostaviti dva ograničenja, uvjeta na problem, kako bismo lakše objasnili generalnu ideju problema i rješenja istog.
 
@@ -87,12 +89,12 @@ U okviru ovog rada razmatrat će se i rješavati problem automatiziranog raspore
 
 Na ova dva uvjeta ćemo temeljiti izradu sustava, no mehanizmi slični onima opisanim u ovom radu mogu se generalizirati i na slične probleme. Takvi problemi mogu pak uključivati raspoređivanje aktivnosti među većim brojem osoba (npr. organiziranje poslova među zaposlenicima u poduzeću) ili među različitim skupinama ljudi (npr. odjelima u poduzeću).
 
-Ovaj problem raspoređivanja zadataka može se predstaviti kao \textbf{višekriterijski optimizacijski problem} -- cilj je pronaći onaj raspored koji prema određenim kriterijima najbolje (ili \textit{dovoljno dobro}) zadovoljava ulazne parametre, a da pri tome ne krši zadana ograničenja. Za rješavanje ovog optimizacijskog problema poslužit ćemo se genetskim algoritmom, tako da problem zapravo postaje optimizacija crne kutije (engl. \textit{black-box optimisation)}, a najveći posao tad postaje definiranje reprezentacije rješenja prikladne za upotrebu u genetskom algoritmu\footnote{Kodiranje problema, vidi \ref{kodiranje problema}} te definiranje funkcije (odnosno funkcija) dobrote (engl. \textit{fitness function}) rješenja (odnosno rasporeda).
+Ovaj problem raspoređivanja zadataka može se predstaviti kao višekriterijski optimizacijski proble -- cilj je pronaći onaj raspored koji prema određenim kriterijima najbolje (ili \textit{dovoljno dobro}) zadovoljava ulazne parametre, a da pri tome ne krši zadana ograničenja. Za rješavanje ovog optimizacijskog problema poslužit ćemo se genetskim algoritmom, tako da problem zapravo postaje optimizacija crne kutije (engl. \textit{black-box optimisation)}, a najveći posao tad postaje definiranje reprezentacije rješenja prikladne za upotrebu u genetskom algoritmu\footnote{Kodiranje problema, vidi \ref{kodiranje problema}} te definiranje funkcije (odnosno funkcija) dobrote (engl. \textit{fitness function}) rješenja (odnosno rasporeda).
 
-Na početku, u poglavlju \ref{definicija}, definirat ćemo ulazne parametre sustava i elemente željenog rješenja. Također ćemo definirati način evaluacije rasporeda, odnosno određivanja što čini raspored \textit{dobrim}. U poglavlju \ref{implementacija} ćemo se osvrnuti na neke dijelove arhitekture sustava (korištene biblioteke, modeli i evaluacijske funkcije) te njihovu implementaciju u programskom jeziku Java. U poglavlju \ref{primjena genetskog algoritma} bavit ćemo se genetskim algoritmom za rješavanje problema raspoređivanja zadataka te praktičnim svojstvima njegovih dijelova. Pobliže ćemo se upoznati s operatorima selekcije, križanja i mutacije te implementacijom pomoću biblioteke Jenetics koja se koristi kao platforma genetskog algoritma. Na kraju ćemo u poglavlju \ref{web aplikacija} napraviti jednostavno web sučelje za korištenje sustava.% Konačno, u poglavlju \ref{primjeri} proučit ćemo nekoliko primjera korištenja sustava te načine na koji različiti ulazni parametri utječu na dobiveni rezultat.
+Na početku, u poglavlju \ref{definicija}, definirat ćemo ulazne parametre sustava i elemente željenog rješenja. Također ćemo definirati način evaluacije rasporeda, odnosno određivanja što čini raspored \textit{dobrim}. U poglavlju \ref{implementacija} ćemo se osvrnuti na neke dijelove arhitekture sustava (korištene biblioteke, modele i evaluacijske funkcije) te njihovu implementaciju u programskom jeziku Java. U poglavlju \ref{primjena genetskog algoritma} bavit ćemo se genetskim algoritmom za rješavanje problema raspoređivanja zadataka te praktičnim svojstvima njegovih dijelova. Pobliže ćemo se upoznati s operatorima selekcije, križanja i mutacije te implementacijom pomoću biblioteke Jenetics koja se koristi kao platforma genetskog algoritma. Na kraju ćemo u poglavlju \ref{web aplikacija} napraviti jednostavno web sučelje za korištenje sustava.% Konačno, u poglavlju \ref{primjeri} proučit ćemo nekoliko primjera korištenja sustava te načine na koji različiti ulazni parametri utječu na dobiveni rezultat.
 
-\chapter{Problem raspoređivanja}\label{definicija}
-Prilikom definiranja problema raspoređivanja, korisnik zadaje skup \textbf{aktivnosti} koje sustav treba rasporediti, skup postojećih \textbf{fiksnih zadataka} (odnosno postojeći raspored) te parametre algoritma. Zadatak sustava je složiti \textit{dobar} raspored zadanih aktivnosti, uzimajući u obzir ostale parametre.
+\chapter{Problem raspoređivanja aktivnosti}\label{definicija}
+Prilikom definiranja problema raspoređivanja, korisnik zadaje skup aktivnosti koje sustav treba rasporediti, skup postojećih fiksnih zadataka (odnosno postojeći raspored) te parametre algoritma. Zadatak sustava je složiti \textit{dobar} raspored zadanih aktivnosti, uzimajući u obzir ostale parametre.
 
 \section{Ulazni podaci}\label{ulazni podaci}
 
@@ -128,7 +130,7 @@ Atributi fiksnog događaja su:
 \subsection{Parametri algoritma}
 Očito je da postoji \textit{mnogo} različitih rasporeda za dani ulazni skup aktivnosti i fiksnih događaja. Kako bi korisnik mogao odrediti koji od rasporeda aktivnosti njemu više odgovara, sustavu se mogu predati određeni parametri evaluacije rasporeda. O tim će parametrima biti riječi u \ref{evaluacija rasporeda}
 
-\section{Elementi rješenja}\label{elementi rjesenja}
+\section{Elementi rješenja problema raspoređivanja aktivnosti}\label{elementi rjesenja}
 Iz zadanog skupa ulaznih parametara, sustav mora generirati rješenje:
 \begin{itemize}
   \item koje zadovoljava uvjete navedene u postavci zadatka (vidi poglavlje \ref{uvod}),
@@ -171,14 +173,14 @@ pri čemu je $x$ raspored koji evaluiramo, $f_i$ pojedina funkcija (pravilo), $w
 
 Iz ovoga je potrebno definirati još 3 ulazna parametra $w_i$ -- težine pojedinih funkcija.
 
-\chapter{Implementacija}\label{implementacija}
+\chapter{Implementacija rješenja problema raspoređivanja aktivnosti}\label{implementacija}
 
 \section{Biblioteke}
-Sustav ćemo implementirati u programskom jeziku Java, oslanjajući se na biblioteku \textbf{Jenetics}\footnote{http://jenetics.io} za genetski algoritam. Za web dio aplikacije koristit ćemo \textbf{Spark framework}\footnote{http://sparkjava.com}.
+Sustav ćemo implementirati u programskom jeziku Java, oslanjajući se na biblioteku \textbf{Jenetics}\footnote{http://jenetics.io} za genetski algoritam. Za web dio aplikacije koristit ćemo \textbf{Spark Framework}\footnote{http://sparkjava.com}.
 
 \paragraph{Jenetics} \textit{Jenetics} je biblioteka otvorenog k{\^o}da koja nudi funkcionalnost genetskog algoritma, s već implementiranom podrškom za česte koncepte genetskog algoritma. Uključuje nekoliko često korištenih operatora selekcije, križanja i mutacije te nudi jednostavno sučelje za implementaciju svojih operatora. Cijelo sučelje biblioteke se temelji na \textbf{Java 8 tokovima}\footnote{Java stream API} te je većina operacija paralelizirana, imajući na umu višedretvenost.
 
-\paragraph{Spark framework} \textit{Spark framework} je "micro" radni okvir za izradu web aplikacija manjih opsega napisan u Javi. Omogućuje vrlo brzu izradu jednostavnijih web aplikacija s naglaskom na performansama i minimalizmu pisanja. Kako je kod ove aplikacije fokus na algoritamskom dijelu, web dio je minimalan što ga čini odličnim izborom.
+\paragraph{Spark Framework} \textit{Spark Framework} je "micro" radni okvir za izradu web aplikacija manjih opsega napisan u Javi. Omogućuje vrlo brzu izradu jednostavnijih web aplikacija s naglaskom na performansama i minimalizmu pisanja. Kako je kod ove aplikacije fokus na algoritamskom dijelu, web dio je minimalan što ga čini odličnim izborom.
 
 \section{Modeli}
 \paragraph{Task} Nepromjenjivi (engl. \textit{immutable}) model \texttt{Task} predstavlja pojedinu aktivnost. Prisjetimo se, svaka aktivnost je definirana \textbf{nazivom}, \textbf{trajanjem}, \textbf{rokom} te \textbf{prioritetom}, što su ujedno i atributi ovog modela -- prikazano u isječku \ref{code:task}:
@@ -452,7 +454,7 @@ for(Entry<Task, Integer> entry : lastOccurence.entrySet()) {
 }
 \end{lstlisting}
 
-\chapter{Primjena genetskog algoritma}\label{primjena genetskog algoritma}
+\chapter{Primjena genetskog algoritma na rješavanje problema raspoređivanja aktivnosti}\label{primjena genetskog algoritma}
 \section{Genetski algoritam}\label{genetski algoritam}
 Genetski algoritmi su porodica metaheuristika koja svoje ideje temelji na evolucijskom procesu prirodne selekcije. Osnovna ideja iza općeg genetskog algoritma je evoluirati populaciju potencijalnih rješenja primjenom operatora selekcije, križanja i mutacije inspiriranih genetičkom varijacijom i prirodnom selekcijom \citep{mitchell1998introduction}.
 
@@ -716,10 +718,10 @@ Genetski algoritam kao metaheuristiku, zajedno sa svojim operatorima moguće je 
 	
 \end{itemize}
 
-\chapter{Web aplikacija}\label{web aplikacija}
+\chapter{Web aplikacija za raspoređivanja aktivnosti}\label{web aplikacija}
 Konačno, htjeli bismo ponuditi jednostavno web sučelje sustava kroz koje korisnik može unositi ulazne podatke -- aktivnosti, fiksne događaje i parametre sustava -- i vidjeti generirani rezultat -- raspored aktivnosti. Kao osnovu poslužiteljske strane (engl. \textit{back-end}) koristit ćemo radni okvir otvorenog k\^{o}da \textbf{Spark framework}\footnote{http://sparkjava.com}, a na klijentskoj strani (engl. \textit{front-end}) radni okvir Bootstrap\footnote{http://getbootstrap.com/} te biblioteku \textbf{FullCalendar}\footnote{https://fullcalendar.io} za prikaz konačnog generiranog rezultata.
 
-\section{Back-end}
+\section{Poslužiteljski dio}
 Osnovni razred mrežnog dijela sustava je \texttt{Web} koji sadrži ulaznu točku programa u kojoj se inicijalizira \textit{Spark framework} te definiraju \textit{rute}. U nastavku navodimo 4 rute koje čine mrežni dio sustava:
 
 \paragraph{GET /} Ova je ruta ulazna točka klijentskog dijela aplikacije, a stranica korisniku nudi formu za unos zadataka, fiksnih događaja i parametara sustava.
@@ -782,12 +784,12 @@ try {
 
 Linije (1-5) obrađuju ulazne parametre \textit{start} i \textit{end} koji određuju period za koji se trebaju vratiti podaci. Na liniji (7) se iz sesije dohvaća \texttt{Future} objekt koji sadrži (ili će sadržavati) generirani raspored, a linije (8-10) obrađuju grešku u slučaju da planiranje nije zatraženo. Konačno, na liniji (13) se dohvaća generirani raspored te događaji za traženi period. Poziv \texttt{future.get()} s linije (13) je blokirajući poziv koji će blokirati pozivajuću dretvu dok se generiranje rasporeda ne dovrši.
 
-\section{Front-end}
+\section{Klijentski dio}
 Sučelje aplikacije se sastoji od dva pogleda: forme za unos ulaznih podataka -- zadataka, fiksnih događaja i parametara -- i kalendarskog prikaza generiranog rješenja.
 
 \paragraph{Forma za unos ulaznih podataka} Za tablični prikaz i organizaciju sučelja se koristi \textit{front-end} radni okvir Bootstrap s vlastitom implementacijom vrlo jednostavne create-delete forme. Izgled sučelja prikazan je na slici \ref{img:forma}.
 
-\paragraph{Prikaz generiranog rješenja} Za prikaz generiranog rješenja se koristi vrlo moćna biblioteka \textbf{FullCalendar}. Omogućeni su prikaz u obliku liste (engl. \textit{agenda}), mjesečni prikaz, tjedni prikaz te dnevni prikaz. Primjer generiranog rješenja u tjednom prikazu dan je na slici \ref{img:weekly_calendar}. Dodatno su u kalendaru ljubičastom bojom označeni fiksni događaji, plavom bojom raspoređene aktivnosti, a blijedom žutom bojom današnji dan.
+\paragraph{Prikaz generiranog rješenja} Za prikaz generiranog rješenja se koristi vrlo moćna biblioteka FullCalendar. Omogućeni su prikaz u obliku liste (engl. \textit{agenda}), mjesečni prikaz, tjedni prikaz te dnevni prikaz. Primjer generiranog rješenja u tjednom prikazu dan je na slici \ref{img:weekly_calendar}. Dodatno su u kalendaru ljubičastom bojom označeni fiksni događaji, plavom bojom raspoređene aktivnosti, a blijedom žutom bojom današnji dan.
 
 \bigskip
 %\paragraph{}
@@ -826,14 +828,14 @@ Primjer koji se koristi za ilustraciju pogleda na slikama \ref{img:forma} i  \re
 
 \begin{figure}[]
 \centering
-\includegraphics[width=\textwidth]{graphics/screenshot-form.png}
+\includegraphics[width=\textwidth]{resources/graphics/screenshot-form.png}
 \caption{Forma za unos ulaznih podataka}
 \label{img:forma}
 \end{figure}
 
 \begin{figure}[]
 \centering
-\includegraphics[width=\textwidth]{graphics/screenshot-raspored-1.png}
+\includegraphics[width=\textwidth]{resources/graphics/screenshot-raspored-1.png}
 \caption{Tjedni prikaz rasporeda}
 \label{img:weekly_calendar}
 \end{figure}
@@ -852,17 +854,17 @@ U ovom radu predstavili smo problem slaganja osobnog kalendara kao optimizacijsk
 Upoznali smo se i s genetskim algoritmom kao jednim od algoritama evolucijskog računanja, koji se često koristi za rješavanje raznih varijanti problema raspoređivanja. Izrada osobnog rasporeda, razložena u ovom radu, samo je jedan od takvih problema koji dobro ilustrira generalni pristup ovakvim problemima.
 
 \paragraph{}
-Daljnji razvoj sustava može se vršiti na dva fronta. S jedne strane, moguće je razviti naprednije web sučelje za upravljanje sustavom, budući da trenutno sučelje pruža tek minimalan skup kontrola i nikakvu mogućnost upravljanja rezultatima. Dodatno se može implementirati integracija s alatima poput \textit{Google Kalendara}\footnote{https://calendar.google.com} i to-do listama (npr. \textit{Google Keep}\footnote{https://keep.google.com}, \textit{Trello}\footnote{https://trello.com}, \dots). S druge strane, sam algoritam se može razvijati implementirajući nova pravila, promjenom postojećih te uvođenjem novih funkcionalnosti ili parametara.
+Daljnji razvoj sustava može se podijeliti u dvije kategorije. S jedne strane, moguće je razviti naprednije web sučelje za upravljanje sustavom, budući da trenutno sučelje pruža tek minimalan skup kontrola i nikakvu mogućnost upravljanja rezultatima. Dodatno se može implementirati integracija s alatima poput \textit{Google Kalendara}\footnote{https://calendar.google.com} i to-do listama (npr. \textit{Google Keep}\footnote{https://keep.google.com}, \textit{Trello}\footnote{https://trello.com}, \dots). S druge strane, sam algoritam se može razvijati implementirajući nova pravila, promjenom postojećih te uvođenjem novih funkcionalnosti ili parametara.
 
 \paragraph{}
-K\^{o}d sustava dostupan je na Github repozitoriju: https://github.com/the-JJ/Planner .
+K\^{o}d rješenja dostupan je na Github repozitoriju: https://github.com/the-JJ/zavrsni-rad .
 
 
 \bibliography{literatura}
 \bibliographystyle{fer}
 
 \begin{sazetak}
-Automatizirano planiranje i raspoređivanje aktivnosti spada u razred NP-teških problema. U ovom radu se taj problem definira kao optimizacijski problem te se izlaže način njegovog rješavanja primjenom genetskog algoritma. Definiraju se evaluacijske funkcije te biraju prigodni operatori selekcije, križanja i mutacije. U sklopu rada razvija se sustav s web sučeljem koji za zadani ulazni skup ograničenja i aktivnosti koje je potrebno rasporediti stvara raspored koji sadrži zadane aktivnosti i zadovoljava zadana ograničenja.
+Automatizirano planiranje i raspoređivanje aktivnosti spada u razred $\mathcal{NP}$-teških problema. U ovom radu se taj problem definira kao optimizacijski problem te se izlaže način njegovog rješavanja primjenom genetskog algoritma. Definiraju se evaluacijske funkcije te biraju prigodni operatori selekcije, križanja i mutacije. U sklopu rada razvija se sustav s web sučeljem koji za zadani ulazni skup ograničenja i aktivnosti koje je potrebno rasporediti stvara raspored koji sadrži zadane aktivnosti i zadovoljava zadana ograničenja.
 
 \kljucnerijeci{raspoređivanje aktivnosti, automatizirano planiranje i raspoređivanje, optimizacijski problem, genetski algoritam, evolucijsko računanje, metaheuristika}
 \end{sazetak}
@@ -870,7 +872,7 @@ Automatizirano planiranje i raspoređivanje aktivnosti spada u razred NP-teških
 % TODO: Navedite naslov na engleskom jeziku.
 \engtitle{Web Application for Activity Schedule Management}
 \begin{abstract}
-Automated activity planning and scheduling belongs to the NP-hard class of problems. This paper presents such problem as an optimisation problem and offers methods for solving it using genetic algorithms. Covered topics include defining evaluation functions and selection of genetic operators -- selection, recombination and mutation. A constrained system with web interface for automated planning and scheduling of a set of given personal activities is developed.
+Automated activity planning and scheduling belongs to the $\mathcal{NP}$-hard class of problems. This paper presents such problem as an optimisation problem and offers methods for solving it using genetic algorithms. Covered topics include defining evaluation functions and selection of genetic operators -- selection, recombination and mutation. A constrained system with web interface for automated planning and scheduling of a set of given personal activities is developed.
 
 \keywords{Activity Scheduling, Automated Planning and Scheduling, Optimisation Problem, Genetic Algorithm, Evolutionary Computing, Metaheuristics}
 \end{abstract}
