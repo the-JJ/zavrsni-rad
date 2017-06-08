@@ -346,7 +346,7 @@ Parametar $t$ određuje prag ispod kojeg se mijenja ponašanje funkcije - za poz
 double evaluate(Moment previous, int sequenceLength) {
 	// this.param_t - ulazni parametar t
 	// this.param_n - ulazni parametar n
-	int sgn = Math.signum(param_n);
+	double sgn = Math.signum(this.param_n);
 	if (sequenceLength < this.param_t) {
 		sgn *= -1;
 	}
