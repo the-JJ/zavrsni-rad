@@ -33781,6 +33781,62 @@ $(function () {
 
 $ = __webpack_require__(49);
 
+example1 = function () {
+    let tasksTable = $('#tasksTable');
+
+    let row = tasksTable.find('.dataRow').last();
+    row.find('.tasksTable-name input').val('Pisanje zadaće');
+    row.find('.tasksTable-priority input').val('1');
+    row.find('.tasksTable-duration input').slider('setValue', 120);
+    row.find('.tasksTable-deadline input').val("05.07.2017 18:00");
+
+    addTasksTableRow(tasksTable);
+
+    row = tasksTable.find('.dataRow').last();
+    row.find('.tasksTable-name input').val('Priprema obrane');
+    row.find('.tasksTable-priority input').val('2');
+    row.find('.tasksTable-duration input').slider('setValue', 300);
+    row.find('.tasksTable-deadline input').val("04.07.2017 12:00");
+
+    addTasksTableRow(tasksTable);
+
+    row = tasksTable.find('.dataRow').last();
+    row.find('.tasksTable-name input').val('Učenje za ispit');
+    row.find('.tasksTable-priority input').val('3');
+    row.find('.tasksTable-duration input').slider('setValue', 600);
+    row.find('.tasksTable-deadline input').val("07.07.2017 12:00");
+
+    let eventsTable = $('#fixedEventsTable');
+    row = eventsTable.find('.dataRow').last();
+    row.find('.fixedEventsTable-name input').val('Spavanje');
+    row.find('.fixedEventsTable-start input').val("03.07.2017 23:00");
+    row.find('.fixedEventsTable-end input').val("04.07.2017 09:00");
+
+    addFixedEventsTableRow(eventsTable);
+
+    row = eventsTable.find('.dataRow').last();
+    row.find('.fixedEventsTable-name input').val('Spavanje');
+    row.find('.fixedEventsTable-start input').val("04.07.2017 23:00");
+    row.find('.fixedEventsTable-end input').val("05.07.2017 09:00");
+
+    addFixedEventsTableRow(eventsTable);
+
+    row = eventsTable.find('.dataRow').last();
+    row.find('.fixedEventsTable-name input').val('Spavanje');
+    row.find('.fixedEventsTable-start input').val("05.07.2017 23:00");
+    row.find('.fixedEventsTable-end input').val("06.07.2017 09:00");
+
+    addFixedEventsTableRow(eventsTable);
+
+    row = eventsTable.find('.dataRow').last();
+    row.find('.fixedEventsTable-name input').val('Obrana');
+    row.find('.fixedEventsTable-start input').val("04.07.2017 12:00");
+    row.find('.fixedEventsTable-end input').val("04.07.2017 13:30");
+
+    $('input[name=planning_start]').val("03.07.2017 16:00");
+    $('#timeGranulation').slider('setValue', 30);
+};
+
 minuteSliderFormatter = function (value) {
     return ("0" + Math.floor(value / 60)).slice(-2) + ":" + ("0" + Math.floor(value % 60)).slice(-2) + "h";
 };

@@ -4,6 +4,7 @@ cmake-build-debug/
 *.iws
 /out/
 .idea_modules/
+/target/
 
 node_modules/
-
+src/main/resources/public/dist
