@@ -1,0 +1,5 @@
+{% extends "templates/main.pebble" %}
+
+{% block body %}
+    <div id="calendar"></div>
+{% endblock %}

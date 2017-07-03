@@ -1,0 +1,231 @@
+{% extends "templates/main.pebble" %}
+
+{% block body %}
+    <div id="params-form">
+
+        {# Tasks begin #}
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title pull-left">Zadaci za raspoređivanje</h3>
+
+                <div class="btn btn-default pull-right" id="tasks-add-new">
+                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+
+            <table class="table" id="tasksTable">
+                <tr>
+                    <th>Naziv</th>
+                    <th>Prioritet</th>
+                    <th>Trajanje</th>
+                    <th>Rok (deadline)</th>
+                    <th></th>
+                </tr>
+            </table>
+            <script type="text/javascript">
+                $(function() {
+                    addTasksTableRow($('#tasksTable'));
+                });
+            </script>
+        </div>
+        {# Tasks end #}
+
+        {# Fixed events begin #}
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title pull-left">Fiksni događaji</h3>
+
+                <div class="btn btn-default pull-right" id="fixedEvents-add-new">
+                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+
+            <table class="table" id="fixedEventsTable">
+                <tr>
+                    <th>Naziv</th>
+                    <th>Početak</th>
+                    <th>Kraj</th>
+                    <th></th>
+                </tr>
+            </table>
+            <script type="text/javascript">
+                $(function() {
+                    addFixedEventsTableRow($('#fixedEventsTable'));
+                });
+            </script>
+        </div>
+        {# Fixed events end #}
+
+        {# Parameters begin #}
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Parametri algoritma</h3>
+            </div>
+            <div class="panel-body">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Općeniti parametri</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="params-row row-eq-height">
+                            <div class="param-label form-label">Početak planiranja:</div>
+                            <div class="param-value">
+                                <div class="input-group date">
+                                    <input type="text" class="form-control algo_param" name="planning_start" />
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="params-row row-eq-height">
+                            <div class="param-label">Vremenska granulacija:</div>
+                            <div class="param-value">
+                                <input class="minuteSlider algo_param"
+                                    id="timeGranulation"
+                                    name="param_timeGranulation"
+                                    data-slider-id='timeGranulationSlider'
+                                    type="text"
+                                    data-slider-min="10"
+                                    data-slider-max="180"
+                                    data-slider-step="10"
+                                    data-slider-value="10" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Neprekinutost aktivnosti</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="params-row row-eq-height">
+                            <div class="param-label">Težina funkcije:</div>
+                            <div class="param-value">
+                                <input class="numSlider algo_param"
+                                    name="weight_similartask"
+                                    data-slider-id='similartaskWeightSlider'
+                                    type="text"
+                                    data-slider-min="0"
+                                    data-slider-max="20"
+                                    data-slider-step="0.1"
+                                    data-slider-value="1" />
+                            </div>
+                        </div>
+                        <div class="params-row row-eq-height">
+                            <div class="param-label"><i>param_n</i>:</div>
+                            <div class="param-value">
+                                <input class="numSlider algo_param"
+                                    name="similartask_n"
+                                    data-slider-id='similartask_n'
+                                    type="text"
+                                    data-slider-min="-1"
+                                    data-slider-max="1"
+                                    data-slider-step="0.1"
+                                    data-slider-value="0.5" />
+                            </div>
+                        </div>
+                        <div class="params-row row-eq-height">
+                            <div class="param-label"><i>param_t</i>:</div>
+                            <div class="param-value">
+                                <input class="numSlider algo_param"
+                                    name="similartask_t"
+                                    data-slider-id='similartask_t'
+                                    type="text"
+                                    data-slider-min="0"
+                                    data-slider-max="100"
+                                    data-slider-step="1"
+                                    data-slider-value="3" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Poštivanje roka</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="params-row row-eq-height">
+                            <div class="param-label">Težina funkcije:</div>
+                            <div class="param-value">
+                                <input class="numSlider algo_param"
+                                    name="weight_deadline"
+                                    data-slider-id='deadlineWeightSlider'
+                                    type="text"
+                                    data-slider-min="0"
+                                    data-slider-max="20"
+                                    data-slider-step="0.1"
+                                    data-slider-value="2" />
+                            </div>
+                        </div>
+                        <div class="params-row row-eq-height">
+                            <div class="param-label"><i>r<sub>kasno</sub></i>:</div>
+                            <div class="param-value">
+                                <input class="numSlider algo_param"
+                                    name="deadline_r_late"
+                                    data-slider-id='deadline_r_late'
+                                    type="text"
+                                    data-slider-min="0"
+                                    data-slider-max="10"
+                                    data-slider-step="0.1"
+                                    data-slider-value="2" />
+                            </div>
+                        </div>
+                        <div class="params-row row-eq-height">
+                            <div class="param-label"><i>r<sub>rano</sub></i>:</div>
+                            <div class="param-value">
+                                <input class="numSlider algo_param"
+                                    name="deadline_r_early"
+                                    data-slider-id='deadline_r_early'
+                                    type="text"
+                                    data-slider-min="0"
+                                    data-slider-max="10"
+                                    data-slider-step="0.1"
+                                    data-slider-value="2" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Poštivanje prioriteta</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="params-row row-eq-height">
+                            <div class="param-label">Težina funkcije:</div>
+                            <div class="param-value">
+                                <input class="numSlider algo_param"
+                                    name="weight_priority"
+                                    data-slider-id='priorityWeightSlider'
+                                    type="text"
+                                    data-slider-min="0"
+                                    data-slider-max="20"
+                                    data-slider-step="0.1"
+                                    data-slider-value="2" />
+                            </div>
+                        </div>
+                        <div class="params-row row-eq-height">
+                            <div class="param-label"><i>p</i>:</div>
+                            <div class="param-value">
+                                <input class="numSlider algo_param"
+                                    name="priority_p"
+                                    data-slider-id='priority_p'
+                                    type="text"
+                                    data-slider-min="0"
+                                    data-slider-max="500"
+                                    data-slider-step="0.1"
+                                    data-slider-value="50" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {# Parameters end #}
+
+        <input type="button" value="Rasporedi" class="btn" id="submit">
+    </div>
+{% endblock %}}

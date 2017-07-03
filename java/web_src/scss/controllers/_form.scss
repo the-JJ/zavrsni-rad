@@ -1,0 +1,54 @@
+@import '../library/all';
+
+#tasksTable, #fixedEventsTable {
+  th, td {
+    text-align: center;
+  }
+
+  .tasksTable-deleteField, .fixedEventsTable-deleteField {
+    vertical-align: middle;
+    text-align: center;
+
+    .button-delete-row {
+      font-size: 1.7em;
+      text-align: center;
+      cursor: pointer;
+    }
+  }
+}
+
+.row-eq-height {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display:         flex;
+}
+
+.row {
+  margin-bottom: 20px;
+}
+[class*="col-"] {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.params-row {
+  @include clearfix;
+  vertical-align: middle;
+
+  padding-top: 5px;
+  padding-bottom: 5px;
+
+  & .param-label {
+    @include make-sm-column(3);
+    font-weight: bold;
+
+    &.form-label {
+      line-height: $input-height-base;
+    }
+  }
+
+  & .param-value {
+    @include make-sm-column(3);
+  }
+}

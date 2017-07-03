@@ -1,0 +1,9 @@
+.idea/
+
+cmake-build-debug/
+*.iws
+/out/
+.idea_modules/
+
+node_modules/
+
